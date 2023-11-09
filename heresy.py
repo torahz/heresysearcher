@@ -3,17 +3,17 @@ import requests
 from bs4 import BeautifulSoup
 
 print(Fore.MAGENTA + Style.BRIGHT + """
- #####   #####  ####      ##     #####    ####  ######  ## #####  ###### ##   ## #####    ##
-##   ## ##   ##  ##      ####   ##   ##  ##  ##  ##  ## ## ##  ##   ##   ##   ## ##  ##  ####
-#       ##   ##  ##     ##  ##  #       ##       ##  ## ## ##  ##   ##   ##   ## ##  ## ##  ##
- #####  ##   ##  ##     ##  ##   #####  ##       #####  ## #####    ##   ##   ## #####  ##  ##
-     ## ##   ##  ##   # ######       ## ##       ## ##  ## ##       ##   ##   ## ## ##  ######
-##   ## ##   ##  ##  ## ##  ##  ##   ##  ##  ##  ##  ## ## ##       ##   ##   ## ##  ## ##  ##
- #####   #####   ###### ##  ##   #####    ####   ##  ## ## ##       ##   #####   ##  ## ##  ##
+ #####   #####  ####      ##    
+##   ## ##   ##  ##      ####   
+#       ##   ##  ##     ##  ## 
+ #####  ##   ##  ##     ##  ##  
+     ## ##   ##  ##   # ######  
+##   ## ##   ##  ##  ## ##  ##  
+ #####   #####   ###### ##  ## 
 
 """ + Style.RESET_ALL)
 
-print("Pesquisador de Heresias: Que heresia vamos pesquisar hoje varão(oa)?")
+print("Pesquisador de Heresias: Que heresia vai pesquisar hoje varão?")
 
 while True:
   pergunta = input("Você: ")
@@ -25,10 +25,13 @@ while True:
   resposta = requests.get(url)
 
   soup = BeautifulSoup(resposta.text, 'html.parser')
-  conteudo = soup.find('div', class_='entry-content')
+  
+  # Procura pelo primeiro elemento article 
+  conteudo = soup.find('article')
 
   if not conteudo:
-    print(Fore.RED + "Misericóóóórdia irmão(ã)!!! Não vai te meter com isso viu" + Style.RESET_ALL)
+    print(Fore.RED + "Misericóóóórdia irmão!!! Não vai te meter com isso viu" + Style.RESET_ALL)
+
   else:
     print(conteudo.text)
 

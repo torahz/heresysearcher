@@ -1,18 +1,5 @@
-from colorama import Fore, Style
-import subprocess
-import sys
-
-# Verificação de módulos
-
-try:
-    import requests
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "requests"])
-    
-try:
-    from bs4 import BeautifulSoup 
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "beautifulsoup4"])
+import requests
+from bs4 import BeautifulSoup
 
 # Cabeçalho   
 
@@ -27,8 +14,8 @@ while True:
     url = f"https://api.duckduckgo.com/?q={term}&format=json"
     results = requests.get(url).json()
 
-    for result in results["results"]:
-        if "solascriptura-tt.org" in result["href"]:
+    for result in results["relatedTopics"]["results"]:
+            if "solascriptura-tt.org" in result["href"]:
             print("Encontrei um resultado relevante!")
             page = requests.get(result["href"])
             soup = BeautifulSoup(page.content, 'html.parser')

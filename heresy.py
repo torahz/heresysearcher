@@ -1,38 +1,41 @@
 from colorama import Fore, Style
-import requests
-from bs4 import BeautifulSoup
+import subprocess
+import sys
 
-print(Fore.MAGENTA + Style.BRIGHT + """
- #####   #####  ####      ##    
-##   ## ##   ##  ##      ####   
-#       ##   ##  ##     ##  ## 
- #####  ##   ##  ##     ##  ##  
-     ## ##   ##  ##   # ######  
-##   ## ##   ##  ##  ## ##  ##  
- #####   #####   ###### ##  ## 
+# Verificação de módulos
 
-""" + Style.RESET_ALL)
+try:
+    import requests
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "requests"])
+    
+try:
+    from bs4 import BeautifulSoup 
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "beautifulsoup4"])
 
-print("Pesquisador de Heresias: Que heresia vai pesquisar hoje varão?")
+# Cabeçalho   
+
+print("Pesquisador de Heresias: Qual heresia deseja pesquisar hoje?")
 
 while True:
-  pergunta = input("Você: ")
+    term = input("Você: ")
+    
+    if term.lower() == "sair":
+        break
+        
+    url = f"https://api.duckduckgo.com/?q={term}&format=json"
+    results = requests.get(url).json()
 
-  if pergunta.lower() == "sair":
-    break
-
-  url = f"https://solascriptura-tt.org/?s={pergunta}"
-  resposta = requests.get(url)
-
-  soup = BeautifulSoup(resposta.text, 'html.parser')
-  
-  # Procura pelo primeiro elemento article 
-  conteudo = soup.find('article')
-
-  if not conteudo:
-    print(Fore.RED + "Misericóóóórdia irmão!!! Não vai te meter com isso viu" + Style.RESET_ALL)
-
-  else:
-    print(conteudo.text)
-
-print(Fore.MAGENTA + "Encerrando o Pesquisador de Heresias..." + Style.RESET_ALL)
+    for result in results["results"]:
+        if "solascriptura-tt.org" in result["href"]:
+            print("Encontrei um resultado relevante!")
+            page = requests.get(result["href"])
+            soup = BeautifulSoup(page.content, 'html.parser')
+            text = soup.find('article').text
+            print(text)
+            break
+            
+    print("Deseja pesquisar mais alguma coisa?")
+            
+print("Encerrando o Pesquisador de Heresias...")
